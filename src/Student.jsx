@@ -35,15 +35,7 @@ function Student() {
         setStuName(result);
       });
   };
-  // useEffect(() => {
-  //   fetch(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/student`, {
-  //     method: "GET",
-  //   })
-  //     .then((data) => data.json())
-  //     .then((result) => {
-  //       setStuName(result);
-  //     });
-  // }, []);
+
   useEffect(() => {
     setSendRequest(false);
     loadData();
