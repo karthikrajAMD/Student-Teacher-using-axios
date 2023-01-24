@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import LoadingPage from "./LoadingPage";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import axios from "axios";
 import "./port.css";
 import "./Table.css";
+import { ToastContainer, toast } from "react-toastify";
 function Dashboard() {
   const [show, setShow] = useState(true);
   const [teacherStudentSwitch, setTeacherStudentSwitch] = useState(true);
@@ -11,15 +13,28 @@ function Dashboard() {
   const [studentData, setStudentData] = useState(false);
   const [sendRequest, setSendRequest] = useState(false);
   let loadData = async () => {
-    await fetch("https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher")
-      .then((data) => data.json())
-      .then((data) => {
-        setTeacherData(data);
+    // await fetch("https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher")
+    //   .then((data) => data.json())
+    //   .then((data) => {
+    //     setTeacherData(data);
+    //   });
+    let teacherlist = await axios
+      .get("https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher")
+      .then((res) => {
+        if (res.status === 200) {
+          setTeacherData(res.data);
+        } else {
+          toast.error("Error in fetching");
+        }
       });
-    await fetch("https://638f301f9cbdb0dbe31f8c37.mockapi.io/student")
-      .then((data) => data.json())
-      .then((data) => {
-        setStudentData(data);
+    let studentslist = await axios
+      .get("https://638f301f9cbdb0dbe31f8c37.mockapi.io/student")
+      .then((res) => {
+        if (res.status === 200) {
+          setStudentData(res.data);
+        } else {
+          toast.error("Error in fetching");
+        }
       });
   };
   useEffect(() => {
@@ -139,6 +154,18 @@ function Dashboard() {
           )}
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

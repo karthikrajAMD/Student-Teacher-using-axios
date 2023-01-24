@@ -10,6 +10,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { ToastContainer, toast } from "react-toastify";
 import ReplayIcon from "@mui/icons-material/Replay";
 import LoadingPage from "./LoadingPage";
+import axios from "axios";
 function Teacher() {
   const navigate = useNavigate();
   const { value2 } = useContext(Context);
@@ -28,20 +29,28 @@ function Teacher() {
     width: "100%",
   };
   const loadData = async () => {
-    await fetch(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher`, {
-      method: "GET",
-    })
-      .then((data) => data.json())
-      .then((result) => {
-        setTeacherName(result);
+    await axios
+      .get(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher`)
+      .then((data) => {
+        if (data.status === 200) {
+          setTeacherName(data.data);
+        } else {
+          toast.error("Error fetching data");
+        }
       });
   };
   const deleteData = async (n) => {
     if (window.confirm("Press OK to confirm")) {
-      toast.success("Data deleted successfully");
-      await fetch(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher/${n}`, {
-        method: "DELETE",
-      });
+      await axios
+        .delete(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher/${n}`)
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success("Data deleted successfully");
+          } else {
+            toast.error("Error in deleting data");
+          }
+        });
+
       setSendRequest(true);
     } else {
       toast.error("Data not deleted");
@@ -145,23 +154,27 @@ function Teacher() {
           <Button
             variant="primary"
             onClick={() => {
-              fetch(
-                `https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher/${id}`,
-                {
-                  method: "PUT",
-                  body: JSON.stringify({
+              axios
+                .put(
+                  `https://638f301f9cbdb0dbe31f8c37.mockapi.io/teacher/${id}`,
+                  {
                     name,
                     gender,
                     subject,
                     dob,
-                  }),
-                  headers: { "Content-Type": "application/json" },
-                }
-              );
+                  }
+                )
+                .then((res) => {
+                  if (res.status === 200) {
+                    toast.success("Data updated");
+                  } else {
+                    toast.error("Error in updating");
+                  }
+                });
+
               handleClose();
               sendRequest = true;
               setSendRequest(true);
-              toast.success("Data updated");
             }}
           >
             Save Changes

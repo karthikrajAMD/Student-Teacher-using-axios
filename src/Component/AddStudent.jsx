@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 function AddStudent() {
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
@@ -46,9 +47,8 @@ function AddStudent() {
         section !== ""
       ) {
         console.log(name, dob, gender, role, std, section);
-        await fetch(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/student`, {
-          method: "POST",
-          body: JSON.stringify({
+        await axios
+          .post(`https://638f301f9cbdb0dbe31f8c37.mockapi.io/student`, {
             name,
             role,
             rollno,
@@ -56,15 +56,20 @@ function AddStudent() {
             dob,
             std,
             section,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
-        toast.success("Student Data added");
-        setTimeout(() => {
-          navigate("/Student");
-        }, 2000);
+          })
+          .then((res) => {
+            console.log(res);
+            if (res.status === 201) {
+              toast.success("Student Data added");
+              setTimeout(() => {
+                navigate("/Student");
+              }, 2000);
+            } else {
+              toast.error("Error in adding");
+            }
+          });
       } else {
-        toast.error("Error in adding");
+        toast.error("Enter all required data");
       }
     } catch (error) {
       toast.error("Server Error");
